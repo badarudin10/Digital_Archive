@@ -3,163 +3,210 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Biipsite Digital Archive</title>
+    <title>Biipsite | Digital Archive</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        body { font-family: 'Inter', sans-serif; }
+        .glass { backdrop-filter: blur(10px); background: rgba(255, 255, 255, 0.8); }
+    </style>
 </head>
-<body class="bg-gray-50 font-sans">
+<body class="bg-slate-50 text-slate-900 min-h-screen">
 
-    <div class="max-w-5xl mx-auto p-6">
-        <h1 class="text-3xl font-bold text-blue-700 mb-8">Sistem Arsip Digital</h1>
+    <div class="max-w-6xl mx-auto p-4 md:p-8">
+        <header class="flex justify-between items-center mb-10">
+            <div>
+                <h1 class="text-3xl font-bold text-blue-600 tracking-tight">Biipsite.Art</h1>
+                <p class="text-slate-500 text-sm">Sistem Arsip Digital Terintegrasi</p>
+            </div>
+            <div class="bg-white px-4 py-2 rounded-2xl shadow-sm border border-slate-100 flex items-center">
+                <div class="w-3 h-3 bg-green-500 rounded-full mr-2 animate-pulse"></div>
+                <span class="text-xs font-bold text-slate-600 uppercase">Database Connected</span>
+            </div>
+        </header>
 
-        <div class="bg-white p-6 rounded-2xl shadow-sm mb-10 border border-gray-100">
-            <h2 class="font-bold mb-4">Tambah Arsip Baru</h2>
-            <form id="uploadForm" class="flex flex-col md:flex-row gap-4">
-                <input type="text" id="namaFile" placeholder="Nama Dokumen" class="flex-1 p-3 border rounded-xl outline-none focus:ring-2 focus:ring-blue-500" required>
-                <input type="file" id="fileInput" class="flex-1 p-2 border rounded-xl" required>
-                <button type="submit" id="btnSimpan" class="bg-blue-600 text-white px-6 py-3 rounded-xl hover:bg-blue-700 transition">
-                    <i class="fas fa-save mr-2"></i>Simpan
-                </button>
-            </form>
-        </div>
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div class="lg:col-span-1">
+                <div class="bg-white p-6 rounded-3xl shadow-sm border border-slate-100 sticky top-8">
+                    <h2 class="text-lg font-bold mb-4 flex items-center">
+                        <i class="fas fa-cloud-upload-alt mr-2 text-blue-500"></i> Upload Arsip
+                    </h2>
+                    <form id="uploadForm" class="space-y-4">
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Nama Dokumen</label>
+                            <input type="text" id="namaFile" placeholder="Contoh: Surat Izin A1" class="w-full p-3 rounded-xl bg-slate-50 border-none ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition" required>
+                        </div>
+                        <div>
+                            <label class="block text-xs font-bold text-slate-400 uppercase mb-1">Pilih File</label>
+                            <input type="file" id="fileInput" class="w-full text-sm text-slate-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-xs file:font-bold file:bg-blue-50 file:text-blue-700 hover:file:bg-blue-100 cursor-pointer" required>
+                        </div>
+                        <button type="submit" id="btnSimpan" class="w-full bg-blue-600 text-white font-bold py-3 rounded-xl hover:bg-blue-700 shadow-lg shadow-blue-200 transition-all flex justify-center items-center">
+                            <i class="fas fa-save mr-2"></i> Simpan ke Arsip
+                        </button>
+                    </form>
+                </div>
+            </div>
 
-        <div class="mb-6">
-            <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari arsip..." class="w-full p-4 rounded-2xl border-none shadow-sm ring-1 ring-gray-200 outline-none focus:ring-2 focus:ring-blue-500">
-        </div>
+            <div class="lg:col-span-2 space-y-6">
+                <div class="relative">
+                    <i class="fas fa-search absolute left-4 top-1/2 -translate-y-1/2 text-slate-400"></i>
+                    <input type="text" id="searchInput" onkeyup="filterTable()" placeholder="Cari nama dokumen atau tanggal..." class="w-full pl-12 pr-4 py-4 rounded-2xl border-none shadow-sm ring-1 ring-slate-200 focus:ring-2 focus:ring-blue-500 outline-none transition">
+                </div>
 
-        <div class="bg-white rounded-2xl shadow-sm overflow-hidden border border-gray-100">
-            <table class="w-full text-left" id="archiveTable">
-                <thead class="bg-gray-50 border-b border-gray-100">
-                    <tr>
-                        <th class="p-4 text-xs font-bold text-gray-400 uppercase">Tanggal</th>
-                        <th class="p-4 text-xs font-bold text-gray-400 uppercase">Nama Dokumen</th>
-                        <th class="p-4 text-xs font-bold text-gray-400 uppercase text-right">Aksi</th>
-                    </tr>
-                </thead>
-                <tbody id="tableBody" class="divide-y divide-gray-50">
-                    </tbody>
-            </table>
+                <div class="bg-white rounded-3xl shadow-sm border border-slate-100 overflow-hidden">
+                    <div class="overflow-x-auto">
+                        <table class="w-full text-left border-collapse" id="archiveTable">
+                            <thead class="bg-slate-50/50 border-b border-slate-100">
+                                <tr>
+                                    <th class="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-center w-20">No</th>
+                                    <th class="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider">Detail Dokumen</th>
+                                    <th class="p-4 text-[10px] font-bold text-slate-400 uppercase tracking-wider text-right">Aksi</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tableBody" class="divide-y divide-slate-50">
+                                </tbody>
+                        </table>
+                    </div>
+                    <div id="loader" class="p-10 text-center text-slate-400">
+                        <i class="fas fa-spinner fa-spin mr-2"></i> Menghubungkan ke database...
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 
-    <div id="previewModal" class="hidden fixed inset-0 bg-black/60 backdrop-blur-sm flex items-center justify-center p-4 z-50">
-        <div class="bg-white w-full max-w-4xl h-[85vh] rounded-3xl flex flex-col overflow-hidden shadow-2xl">
-            <div class="p-4 border-b flex justify-between items-center">
-                <span class="font-bold">Pratinjau Dokumen</span>
-                <button onclick="closePreview()" class="text-2xl hover:text-red-500">&times;</button>
+    <div id="previewModal" class="hidden fixed inset-0 z-50 glass flex items-center justify-center p-4">
+        <div class="bg-white w-full max-w-5xl h-[90vh] rounded-[2rem] shadow-2xl flex flex-col overflow-hidden border border-slate-200">
+            <div class="p-5 border-b flex justify-between items-center bg-white">
+                <div class="flex items-center">
+                    <div class="w-10 h-10 bg-blue-100 rounded-xl flex items-center justify-center text-blue-600 mr-3">
+                        <i class="fas fa-file-alt"></i>
+                    </div>
+                    <span class="font-bold text-slate-700 text-lg">Pratinjau Dokumen</span>
+                </div>
+                <button onclick="closePreview()" class="w-10 h-10 rounded-full hover:bg-slate-100 text-slate-400 transition flex items-center justify-center">
+                    <i class="fas fa-times"></i>
+                </button>
             </div>
-            <iframe id="previewFrame" class="w-full h-full border-none"></iframe>
+            <div class="flex-grow bg-slate-100">
+                <iframe id="previewFrame" class="w-full h-full border-none" src=""></iframe>
+            </div>
         </div>
     </div>
 
     <script>
-        https://script.google.com/macros/s/AKfycbwg_cy2R6iuaW8nMp4NfcE7Oa2HX7lWKleSax3j1tUVAZvn99FdtlGqrWqcughp5CmG/exec
-        const API_URL = "URL_WEB_APP_KAMU_DARI_LANGKAH_DI_ATAS";
+        // URL WEB APP KAMU
+        const API_URL = "https://script.google.com/macros/s/AKfycbzVexWbfXhg6GZz3mJMP1iG68_ULifrmAmYRmth0ugJLGGnKoflI-IVzhkhDWgFttWx/exec";
 
-// 1. Fungsi Ambil Data Otomatis
-async function loadData() {
-    const tableBody = document.getElementById('tableBody');
-    tableBody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-400 font-medium">Sedang mengambil arsip...</td></tr>';
+        // 1. Ambil Data dari Google Sheets
+        async function loadData() {
+            const tableBody = document.getElementById('tableBody');
+            const loader = document.getElementById('loader');
 
-    try {
-        const res = await fetch(API_URL);
-        const data = await res.json();
-        tableBody.innerHTML = ''; 
-
-        if (data.length === 0) {
-            tableBody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-gray-400">Belum ada arsip tersimpan.</td></tr>';
-            return;
-        }
-
-        data.forEach(row => {
-            const tr = document.createElement('tr');
-            tr.className = "hover:bg-blue-50/50 transition border-b border-gray-50";
-            tr.innerHTML = `
-                <td class="p-4 text-sm text-gray-500">${new Date(row[0]).toLocaleDateString('id-ID')}</td>
-                <td class="p-4 font-medium text-gray-800">${row[1]}</td>
-                <td class="p-4 text-right">
-                    <button onclick="openPreview('${row[3]}')" class="text-blue-600 hover:text-blue-800 font-bold">Lihat</button>
-                </td>
-            `;
-            tableBody.appendChild(tr);
-        });
-    } catch (e) {
-        tableBody.innerHTML = '<tr><td colspan="3" class="p-4 text-center text-red-400">Gagal terhubung ke Database.</td></tr>';
-    }
-}
-
-// 2. Fungsi Upload
-// Fungsi Upload File ke Google Drive & Sheets
-document.getElementById('uploadForm').addEventListener('submit', async (e) => {
-    e.preventDefault();
-    const btn = document.getElementById('btnSimpan');
-    const fileInput = document.getElementById('fileInput');
-    const nama = document.getElementById('namaFile').value;
-
-    if (!fileInput.files[0]) return alert("Pilih file dulu!");
-
-    // Efek Loading pada Tombol
-    btn.disabled = true;
-    btn.innerHTML = '<i class="fas fa-spinner fa-spin mr-2"></i>Mengupload...';
-
-    const file = fileInput.files[0];
-    const reader = new FileReader();
-    
-    reader.onload = async () => {
-        const base64 = reader.result.split(',')[1];
-        const params = new URLSearchParams({
-            fileData: base64,
-            fileName: file.name,
-            mimeType: file.type,
-            nama: nama,
-            kategori: "Digital Archive"
-        });
-
-        try {
-            // PROSES KIRIM DATA
-            const response = await fetch(API_URL, { 
-                method: 'POST', 
-                body: params, 
-                mode: 'no-cors' // Penting agar tidak kena blokir browser
-            });
-
-            // BAGIAN YANG KAMU TANYAKAN (Diletakkan di sini)
-            if (response) {
-                alert("Berhasil Terarsip!");
-                document.getElementById('uploadForm').reset(); // Form jadi kosong lagi
-                btn.disabled = false;
-                btn.innerHTML = '<i class="fas fa-save mr-2"></i>Simpan';
+            try {
+                const res = await fetch(API_URL);
+                const data = await res.json();
                 
-                // Menarik data terbaru tanpa perlu refresh halaman manual
-                loadData(); 
+                loader.style.display = 'none';
+                tableBody.innerHTML = '';
+
+                if (data.length === 0) {
+                    tableBody.innerHTML = '<tr><td colspan="3" class="p-10 text-center text-slate-400 italic">Belum ada arsip. Silakan upload file pertama Anda.</td></tr>';
+                    return;
+                }
+
+                data.reverse().forEach((row, index) => {
+                    const tr = document.createElement('tr');
+                    tr.className = "hover:bg-blue-50/30 transition group";
+                    tr.innerHTML = `
+                        <td class="p-4 text-center text-xs font-bold text-slate-300">${data.length - index}</td>
+                        <td class="p-4">
+                            <div class="text-sm font-bold text-slate-700">${row[1]}</div>
+                            <div class="text-[10px] text-slate-400 mt-1">
+                                <i class="far fa-calendar-alt mr-1"></i> ${new Date(row[0]).toLocaleDateString('id-ID', {day:'2-digit', month:'short', year:'numeric'})}
+                                <span class="mx-2">•</span>
+                                <i class="fas fa-tag mr-1"></i> ${row[2]}
+                            </div>
+                        </td>
+                        <td class="p-4 text-right">
+                            <button onclick="openPreview('${row[3]}')" class="bg-white border border-slate-200 px-4 py-2 rounded-xl text-xs font-bold text-blue-600 hover:bg-blue-600 hover:text-white transition-all shadow-sm">
+                                <i class="fas fa-eye mr-1"></i> Lihat
+                            </button>
+                        </td>
+                    `;
+                    tableBody.appendChild(tr);
+                });
+            } catch (e) {
+                loader.innerHTML = '<span class="text-red-500 italic font-bold">Koneksi Error. Pastikan Deploy Apps Script sudah "Anyone".</span>';
             }
-        } catch (err) {
-            alert("Gagal mengupload. Pastikan URL Web App sudah benar.");
-            btn.disabled = false;
-            btn.innerHTML = "Simpan";
         }
-    };
-    reader.readAsDataURL(file);
-});});
 
-// 3. Fungsi Preview (Biar tidak Error 404)
-function openPreview(url) {
-    if (!url || url === "undefined") return alert("Link file tidak ditemukan.");
-    
-    // Mengubah link Drive menjadi link Preview
-    const embedUrl = url.replace('/view?usp=drivesdk', '/preview').replace('/view', '/preview');
-    
-    document.getElementById('previewFrame').src = embedUrl;
-    document.getElementById('previewModal').classList.remove('hidden');
-}
+        // 2. Fungsi Upload ke Google Drive & Sheets
+        document.getElementById('uploadForm').addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const btn = document.getElementById('btnSimpan');
+            const fileInput = document.getElementById('fileInput');
+            const nama = document.getElementById('namaFile').value;
 
-function closePreview() {
-    document.getElementById('previewModal').classList.add('hidden');
-    document.getElementById('previewFrame').src = '';
-}
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-circle-notch fa-spin mr-2"></i>Memproses...';
 
-// Jalankan saat web dibuka
-window.onload = loadData;
+            const file = fileInput.files[0];
+            const reader = new FileReader();
+            
+            reader.onload = async () => {
+                const base64 = reader.result.split(',')[1];
+                const params = new URLSearchParams({
+                    fileData: base64,
+                    fileName: file.name,
+                    mimeType: file.type,
+                    nama: nama,
+                    kategori: "Arsip Utama"
+                });
+
+                try {
+                    // Kirim ke Google
+                    await fetch(API_URL, { method: 'POST', body: params, mode: 'no-cors' });
+                    alert("Arsip Berhasil Disimpan!");
+                    location.reload(); 
+                } catch (err) {
+                    alert("Gagal mengupload file.");
+                    btn.disabled = false;
+                    btn.innerHTML = "Simpan ke Arsip";
+                }
+            };
+            reader.readAsDataURL(file);
+        });
+
+        // 3. Fungsi Preview modal
+        function openPreview(url) {
+            const frame = document.getElementById('previewFrame');
+            // Ubah link view Google Drive jadi link preview
+            const previewUrl = url.replace('/view?usp=drivesdk', '/preview').replace('/view', '/preview');
+            frame.src = previewUrl;
+            document.getElementById('previewModal').classList.remove('hidden');
+            document.body.style.overflow = 'hidden';
+        }
+
+        function closePreview() {
+            document.getElementById('previewModal').classList.add('hidden');
+            document.getElementById('previewFrame').src = '';
+            document.body.style.overflow = 'auto';
+        }
+
+        // 4. Pencarian Real-time
+        function filterTable() {
+            const input = document.getElementById("searchInput").value.toUpperCase();
+            const rows = document.getElementById("tableBody").getElementsByTagName("tr");
+            for (let row of rows) {
+                const text = row.innerText.toUpperCase();
+                row.style.display = text.includes(input) ? "" : "none";
+            }
+        }
+
+        // Jalankan saat load halaman
+        window.onload = loadData;
     </script>
 </body>
 </html>
